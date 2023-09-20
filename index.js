@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./src/DbConnection/connect");
 require("dotenv").config({ path: "./src/configs/.env" });
 const errorHandler = require("./src/middlewares/errorHandler"); // Load environment variables from .env file
+const profileRoutes = require("./src/routes/profileRoutes");
 
 const app = express();
 
@@ -11,13 +12,7 @@ app.use(errorHandler);
 
 const port = process.env.PORT || 5000;
 
-// Define your MongoDB models, routes, and application logic here
-
-// Define a route
-app.get("/", (req, res) => {
-  res.send("Hello, Express!");
-});
-
+app.use("/api/profiles", profileRoutes);
 /**
  * Start the application.
  * @function
