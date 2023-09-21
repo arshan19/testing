@@ -1,6 +1,6 @@
 const express = require("express");
-const connectDB = require("./src/DbConnection/connect");
-require("dotenv").config({ path: "./src/configs/.env" });
+const connectDB = require("./src/configs/DbConnect");
+require("dotenv").config();
 const errorHandler = require("./src/middlewares/errorHandler"); // Load environment variables from .env file
 const profileRoutes = require("./src/routes/profileRoutes");
 
@@ -12,7 +12,7 @@ app.use(errorHandler);
 
 const port = process.env.PORT || 5000;
 
-app.use("/api/profiles", profileRoutes);
+app.use("/api", profileRoutes);
 /**
  * Start the application.
  * @function

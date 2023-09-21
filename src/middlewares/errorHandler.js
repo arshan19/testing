@@ -1,27 +1,28 @@
-// src/middlewares/errorHandler.js
+// errorHandler.js
 
-// Custom error handling middleware
 const errorHandler = (err, req, res, next) => {
-  // Log the error for debugging (optional)
-  console.error(err);
+  if (err) {
+    console.error(err);
 
-  // Default error status and message
-  let statusCode = 500;
-  let errorMessage = "Internal Server Error";
+    // Default to 500 (Internal Server Error)
+    let statusCode = err.statusCode || 500;
+    let errorMessage = err.message || "Internal Server Error";
 
-  // Customize error response based on the type of error
-  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-    // Handle JSON parsing error
-    statusCode = 400;
-    errorMessage = "Invalid JSON";
-  } else if (err instanceof CustomError) {
-    // Handle custom application-specific errors (if needed)
-    statusCode = err.status;
-    errorMessage = err.message;
+    // Check for specific error types and customize the response
+    if (err.name === "ValidationError") {
+      // Handle Mongoose validation errors (e.g., required fields)
+      statusCode = 400;
+      errorMessage = "Validation Error";
+    } else if (err.name === "CastError") {
+      // Handle Mongoose cast errors (e.g., invalid ObjectId)
+      statusCode = 400;
+      errorMessage = "Invalid ID";
+    }
+
+    res.status(statusCode).json({ error: errorMessage });
+  } else {
+    next(); // If no error, pass control to the next middleware
   }
-
-  // Send the error response to the client
-  res.status(statusCode).json({ error: errorMessage });
 };
 
 module.exports = errorHandler;
